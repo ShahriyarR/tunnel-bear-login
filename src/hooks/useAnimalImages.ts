@@ -22,37 +22,41 @@ export function useAnimalImages(): AnimalImages {
   useEffect(() => {
     type ImageModule = { default: string };
 
-    const loadImages = async (animal: 'bear' | 'dog' | 'cat') => {
+    const loadAnimalImages = async (animal: 'bear' | 'dog' | 'cat') => {
+      const watchGlob = import.meta.glob<ImageModule>(`/src/assets/img/watch_${animal}_*.png`, { eager: true });
+      const hideGlob = import.meta.glob<ImageModule>(`/src/assets/img/hide_${animal}_*.png`, { eager: true });
+      const peakGlob = import.meta.glob<ImageModule>(`/src/assets/img/peak_${animal}_*.png`, { eager: true });
+
+      const sortImages = (glob: Record<string, ImageModule>) =>
+        Object.values(glob)
+          .map((img) => img.default)
+          .sort((a, b) => {
+            const aNum = parseInt(a.match(/\d+/)?.[0] || "0");
+            const bNum = parseInt(b.match(/\d+/)?.[0] || "0");
+            return aNum - bNum;
+          });
+
+      return {
+        watchImages: sortImages(watchGlob),
+        hideImages: sortImages(hideGlob),
+        peakImages: sortImages(peakGlob),
+      };
+    };
+
+    const loadAllImages = async () => {
       try {
-        const watchGlob = import.meta.glob<ImageModule>(`/src/assets/img/watch_${animal}_*.png`, { eager: true });
-        const hideGlob = import.meta.glob<ImageModule>(`/src/assets/img/hide_${animal}_*.png`, { eager: true });
-        const peakGlob = import.meta.glob<ImageModule>(`/src/assets/img/peak_${animal}_*.png`, { eager: true });
-
-        const sortImages = (glob: Record<string, ImageModule>) =>
-          Object.values(glob)
-            .map((img) => img.default)
-            .sort((a, b) => {
-              const aNum = parseInt(a.match(/\d+/)?.[0] || "0");
-              const bNum = parseInt(b.match(/\d+/)?.[0] || "0");
-              return aNum - bNum;
-            });
-
-        setImages((prev) => ({
-          ...prev,
-          [animal]: {
-            watchImages: sortImages(watchGlob),
-            hideImages: sortImages(hideGlob),
-            peakImages: sortImages(peakGlob),
-          },
-        }));
+        const [bear, dog, cat] = await Promise.all([
+          loadAnimalImages('bear'),
+          loadAnimalImages('dog'),
+          loadAnimalImages('cat'),
+        ]);
+        setImages({ bear, dog, cat });
       } catch {
-        console.info(`${animal} images not yet available`);
+        console.info('Some animal images not yet available');
       }
     };
 
-    loadImages('bear');
-    loadImages('dog');
-    loadImages('cat');
+    loadAllImages();
   }, []);
 
   return images;
