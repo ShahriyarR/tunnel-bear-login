@@ -1,6 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 type InputFocus = 'EMAIL' | 'PASSWORD';
+
+type AnimalType = 'bear' | 'dog' | 'cat';
+
+interface AnimalImages {
+  bear: { watchImages: string[]; hideImages: string[]; peakImages: string[] };
+  dog: { watchImages: string[]; hideImages: string[]; peakImages: string[] };
+  cat: { watchImages: string[]; hideImages: string[]; peakImages: string[] };
+}
 
 interface UseBearAnimationProps {
   watchBearImages: string[];
@@ -8,6 +16,7 @@ interface UseBearAnimationProps {
   peakBearImages: string[];
   emailLength: number;
   showPassword: boolean;
+  animalImages?: AnimalImages;
 }
 
 export function useBearAnimation({
@@ -16,14 +25,35 @@ export function useBearAnimation({
   peakBearImages,
   emailLength,
   showPassword,
+  animalImages,
 }: UseBearAnimationProps) {
   const [currentFocus, setCurrentFocus] = useState<InputFocus>('EMAIL');
+  const [currentAnimalIndex, setCurrentAnimalIndex] = useState<AnimalType>('bear');
   const [currentBearImage, setCurrentBearImage] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const prevFocus = useRef(currentFocus);
   const prevShowPassword = useRef(showPassword);
   const timeouts = useRef<number[]>([]);
+
+  const getCurrentAnimalImages = useCallback(() => {
+    if (animalImages) {
+      return animalImages[currentAnimalIndex];
+    }
+    return {
+      watchImages: watchBearImages,
+      hideImages: hideBearImages,
+      peakImages: peakBearImages,
+    };
+  }, [animalImages, currentAnimalIndex, watchBearImages, hideBearImages, peakBearImages]);
+
+  const cycleToNextAnimal = () => {
+    setCurrentAnimalIndex((prev) => {
+      const order: AnimalType[] = ['bear', 'dog', 'cat'];
+      const currentIdx = order.indexOf(prev);
+      return order[(currentIdx + 1) % order.length];
+    });
+  };
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -61,39 +91,44 @@ export function useBearAnimation({
       });
     };
 
+    const currentImages = getCurrentAnimalImages();
+
     // For password input, animate through hide bear images
     const animateWatchingBearImages = () => {
       const progress = Math.min(emailLength / 30, 1);
       const index = Math.min(
-        Math.floor(progress * (watchBearImages.length - 1)),
-        watchBearImages.length - 1,
+        Math.floor(progress * (currentImages.watchImages.length - 1)),
+        currentImages.watchImages.length - 1,
       );
-      setCurrentBearImage(watchBearImages[Math.max(0, index)]);
+      setCurrentBearImage(currentImages.watchImages[Math.max(0, index)]);
       setIsAnimating(false);
+      if (animalImages) {
+        cycleToNextAnimal();
+      }
     };
 
     // Animation Logic based on Focus and ShowPassword
     if (currentFocus === 'EMAIL') {
       if (prevFocus.current === 'PASSWORD') {
         // Reverse hideBearImages when moving from PASSWORD to EMAIL
-        animateImages(hideBearImages, 60, true, animateWatchingBearImages);
+        animateImages(currentImages.hideImages, 60, true, animateWatchingBearImages);
       } else {
         animateWatchingBearImages();
       }
     } else if (currentFocus === 'PASSWORD') {
       if (prevFocus.current !== 'PASSWORD') {
         // First time entering password field
-        animateImages(hideBearImages, 40, false, () => {
+        animateImages(currentImages.hideImages, 40, false, () => {
           if (showPassword) {
-            animateImages(peakBearImages, 50);
+            animateImages(currentImages.peakImages, 50);
           }
         });
       } else if (showPassword && prevShowPassword.current === false) {
         // Show password selected
-        animateImages(peakBearImages, 50);
+        animateImages(currentImages.peakImages, 50);
       } else if (!showPassword && prevShowPassword.current === true) {
         // Hide password selected
-        animateImages(peakBearImages, 50, true);
+        animateImages(currentImages.peakImages, 50, true);
       }
     }
 
@@ -106,13 +141,19 @@ export function useBearAnimation({
     watchBearImages,
     hideBearImages,
     peakBearImages,
+    animalImages,
+    currentAnimalIndex,
+    getCurrentAnimalImages,
   ]);
 
   return {
     currentFocus,
     setCurrentFocus,
     currentBearImage:
-      currentBearImage ?? (watchBearImages.length > 0 ? watchBearImages[0] : null),
+      currentBearImage ?? (getCurrentAnimalImages().watchImages.length > 0 
+        ? getCurrentAnimalImages().watchImages[0] 
+        : null),
     isAnimating,
+    currentAnimalType: currentAnimalIndex,
   };
 }
