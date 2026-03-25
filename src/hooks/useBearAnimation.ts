@@ -28,7 +28,7 @@ export function useBearAnimation({
   animalImages,
 }: UseBearAnimationProps) {
   const [currentFocus, setCurrentFocus] = useState<InputFocus>('EMAIL');
-  const [currentAnimalIndex, setCurrentAnimalIndex] = useState<AnimalType>('bear');
+  const [currentAnimalType] = useState<AnimalType>('bear');
   const [currentBearImage, setCurrentBearImage] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -38,24 +38,15 @@ export function useBearAnimation({
 
   const getCurrentAnimalImages = useCallback(() => {
     if (animalImages) {
-      return animalImages[currentAnimalIndex];
+      return animalImages[currentAnimalType];
     }
     return {
       watchImages: watchBearImages,
       hideImages: hideBearImages,
       peakImages: peakBearImages,
     };
-  }, [animalImages, currentAnimalIndex, watchBearImages, hideBearImages, peakBearImages]);
+  }, [animalImages, currentAnimalType, watchBearImages, hideBearImages, peakBearImages]);
 
-  const cycleToNextAnimal = () => {
-    setCurrentAnimalIndex((prev) => {
-      const order: AnimalType[] = ['bear', 'dog', 'cat'];
-      const currentIdx = order.indexOf(prev);
-      return order[(currentIdx + 1) % order.length];
-    });
-  };
-
-  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => timeouts.current.forEach(clearTimeout);
   }, []);
@@ -102,9 +93,6 @@ export function useBearAnimation({
       );
       setCurrentBearImage(currentImages.watchImages[Math.max(0, index)]);
       setIsAnimating(false);
-      if (animalImages) {
-        cycleToNextAnimal();
-      }
     };
 
     // Animation Logic based on Focus and ShowPassword
@@ -142,7 +130,7 @@ export function useBearAnimation({
     hideBearImages,
     peakBearImages,
     animalImages,
-    currentAnimalIndex,
+    currentAnimalType,
     getCurrentAnimalImages,
   ]);
 
@@ -154,6 +142,6 @@ export function useBearAnimation({
         ? getCurrentAnimalImages().watchImages[0] 
         : null),
     isAnimating,
-    currentAnimalType: currentAnimalIndex,
+    currentAnimalType,
   };
 }
