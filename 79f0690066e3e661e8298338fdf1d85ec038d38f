@@ -1,0 +1,228 @@
+src/hooks/useBearAnimation.ts
+  100758b065339bff 1,5-12,19,28,31,39-57,94-95,100-101,103,105-107,114,121,123,128,131,144-146,153-155,157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.19",
+  "base_commit_sha": "79f0690066e3e661e8298338fdf1d85ec038d38f",
+  "prompts": {
+    "100758b065339bff": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2da0e2747ffeyedp5oUtIMf7zh",
+        "model": "opencode/minimax-m2.5-free"
+      },
+      "human_author": "Shahriyar Rzayev <rzayev.sehriyar@gmail.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "You need to implement Chunk 2: Update useBearAnimation.ts\n\n**CRITICAL: You must actually modify the file. The previous attempt did not make any changes.**\n\n## File to Modify\n\n`.worktrees/add-animals/src/hooks/useBearAnimation.ts`\n\n## Required Changes (must all be implemented)\n\n1. **Add at TOP of file** (after the existing imports):\n```typescript\ntype AnimalType = 'bear' | 'dog' | 'cat';\n\ninterface AnimalImages {\n  bear: { watchImages: string[]; hideImages: string[]; peakImages: string[] };\n  dog: { watchImages: string[]; hideImages: string[]; peakImages: string[] };\n  cat: { watchImages: string[]; hideImages: string[]; peakImages: string[] };\n}\n```\n\n2. **Update UseBearAnimationProps interface** (around line 5-11):\n```typescript\ninterface UseBearAnimationProps {\n  watchBearImages: string[];\n  hideBearImages: string[];\n  peakBearImages: string[];\n  emailLength: number;\n  showPassword: boolean;\n  animalImages?: AnimalImages; // NEW - Optional: if provided, enables cycling\n}\n```\n\n3. **Add to hook function parameters** (around line 13-19):\n```typescript\nexport function useBearAnimation({\n  watchBearImages,\n  hideBearImages,\n  peakBearImages,\n  emailLength,\n  showPassword,\n  animalImages, // NEW\n}: UseBearAnimationProps) {\n```\n\n4. **Add state for current animal** (around line 20-22):\n```typescript\n  const [currentFocus, setCurrentFocus] = useState<InputFocus>('EMAIL');\n  const [currentAnimalIndex, setCurrentAnimalIndex] = useState<AnimalType>('bear'); // NEW\n  const [currentBearImage, setCurrentBearImage] = useState<string | null>(null);\n```\n\n5. **Add helper functions** (add inside the hook function, before the useEffect):\n```typescript\n  const getCurrentAnimalImages = () => {\n    if (animalImages) {\n      return animalImages[currentAnimalIndex];\n    }\n    return {\n      watchImages: watchBearImages,\n      hideImages: hideBearImages,\n      peakImages: peakBearImages,\n    };\n  };\n\n  const cycleToNextAnimal = () => {\n    setCurrentAnimalIndex((prev) => {\n      const order: AnimalType[] = ['bear', 'dog', 'cat'];\n      const currentIdx = order.indexOf(prev);\n      return order[(currentIdx + 1) % order.length];\n    });\n  };\n```\n\n6. **Update the animation logic** - use getCurrentAnimalImages() instead of the direct props, and add cycleToNextAnimal() call when animations complete.\n\n7. **Update the return statement** (at the end):\n```typescript\n  return {\n    currentFocus,\n    setCurrentFocus,\n    currentBearImage:\n      currentBearImage ?? (getCurrentAnimalImages().watchImages.length > 0 \n        ? getCurrentAnimalImages().watchImages[0] \n        : null),\n    isAnimating,\n    currentAnimalType: currentAnimalIndex, // NEW\n  };\n```\n\n## Verify After Changes\n\n- Run: `npm run lint`\n- Ensure build works: `npm run build`\n\n## Commit\n\nAfter all changes are applied, commit with:\n```bash\ngit add src/hooks/useBearAnimation.ts\ngit commit -m \"feat: add animal cycling support to useBearAnimation\"\n```\n\n## Report\n\nWhen done, report:\n- **Status:** DONE\n- What exactly was changed\n- Confirm lint passes",
+          "timestamp": "2026-03-25T17:01:39.899+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "read",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts"
+          },
+          "timestamp": "2026-03-25T17:01:39.903+00:00"
+        },
+        {
+          "type": "assistant",
+          "text": "Now I'll make all the required changes:",
+          "timestamp": "2026-03-25T17:01:42.471+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "import { useState, useEffect, useRef } from 'react';\n\ntype InputFocus = 'EMAIL' | 'PASSWORD';\n\ntype AnimalType = 'bear' | 'dog' | 'cat';\n\ninterface AnimalImages {\n  bear: { watchImages: string[]; hideImages: string[]; peakImages: string[] };\n  dog: { watchImages: string[]; hideImages: string[]; peakImages: string[] };\n  cat: { watchImages: string[]; hideImages: string[]; peakImages: string[] };\n}\n\ninterface UseBearAnimationProps {",
+            "oldString": "import { useState, useEffect, useRef } from 'react';\n\ntype InputFocus = 'EMAIL' | 'PASSWORD';\n\ninterface UseBearAnimationProps {"
+          },
+          "timestamp": "2026-03-25T17:01:42.471+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "interface UseBearAnimationProps {\n  watchBearImages: string[];\n  hideBearImages: string[];\n  peakBearImages: string[];\n  emailLength: number;\n  showPassword: boolean;\n  animalImages?: AnimalImages;\n}",
+            "oldString": "interface UseBearAnimationProps {\n  watchBearImages: string[];\n  hideBearImages: string[];\n  peakBearImages: string[];\n  emailLength: number;\n  showPassword: boolean;\n}"
+          },
+          "timestamp": "2026-03-25T17:01:55.119+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "export function useBearAnimation({\n  watchBearImages,\n  hideBearImages,\n  peakBearImages,\n  emailLength,\n  showPassword,\n  animalImages,\n}: UseBearAnimationProps) {",
+            "oldString": "export function useBearAnimation({\n  watchBearImages,\n  hideBearImages,\n  peakBearImages,\n  emailLength,\n  showPassword,\n}: UseBearAnimationProps) {"
+          },
+          "timestamp": "2026-03-25T17:02:01.988+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "  const [currentFocus, setCurrentFocus] = useState<InputFocus>('EMAIL');\n  const [currentAnimalIndex, setCurrentAnimalIndex] = useState<AnimalType>('bear');\n  const [currentBearImage, setCurrentBearImage] = useState<string | null>(null);",
+            "oldString": "  const [currentFocus, setCurrentFocus] = useState<InputFocus>('EMAIL');\n  const [currentBearImage, setCurrentBearImage] = useState<string | null>(null);"
+          },
+          "timestamp": "2026-03-25T17:02:08.611+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "  const prevFocus = useRef(currentFocus);\n  const prevShowPassword = useRef(showPassword);\n  const timeouts = useRef<number[]>([]);\n\n  const getCurrentAnimalImages = () => {\n    if (animalImages) {\n      return animalImages[currentAnimalIndex];\n    }\n    return {\n      watchImages: watchBearImages,\n      hideImages: hideBearImages,\n      peakImages: peakBearImages,\n    };\n  };\n\n  const cycleToNextAnimal = () => {\n    setCurrentAnimalIndex((prev) => {\n      const order: AnimalType[] = ['bear', 'dog', 'cat'];\n      const currentIdx = order.indexOf(prev);\n      return order[(currentIdx + 1) % order.length];\n    });\n  };\n\n  // Cleanup timeouts on unmount\n  useEffect(() => {",
+            "oldString": "  const prevFocus = useRef(currentFocus);\n  const prevShowPassword = useRef(showPassword);\n  const timeouts = useRef<number[]>([]);\n\n  // Cleanup timeouts on unmount\n  useEffect(() => {"
+          },
+          "timestamp": "2026-03-25T17:02:16.252+00:00"
+        },
+        {
+          "type": "assistant",
+          "text": "Now I need to update the animation logic to use getCurrentAnimalImages():",
+          "timestamp": "2026-03-25T17:02:26.055+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "read",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts"
+          },
+          "timestamp": "2026-03-25T17:02:26.055+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "    const currentImages = getCurrentAnimalImages();\n\n    // For password input, animate through hide bear images\n    const animateWatchingBearImages = () => {\n      const progress = Math.min(emailLength / 30, 1);\n      const index = Math.min(\n        Math.floor(progress * (currentImages.watchImages.length - 1)),\n        currentImages.watchImages.length - 1,\n      );\n      setCurrentBearImage(currentImages.watchImages[Math.max(0, index)]);\n      setIsAnimating(false);\n      if (animalImages) {\n        cycleToNextAnimal();\n      }\n    };\n\n    // Animation Logic based on Focus and ShowPassword\n    if (currentFocus === 'EMAIL') {\n      if (prevFocus.current === 'PASSWORD') {\n        // Reverse hideBearImages when moving from PASSWORD to EMAIL\n        animateImages(currentImages.hideImages, 60, true, animateWatchingBearImages);\n      } else {\n        animateWatchingBearImages();\n      }\n    } else if (currentFocus === 'PASSWORD') {\n      if (prevFocus.current !== 'PASSWORD') {\n        // First time entering password field\n        animateImages(currentImages.hideImages, 40, false, () => {\n          if (showPassword) {\n            animateImages(currentImages.peakImages, 50);\n          }\n        });\n      } else if (showPassword && prevShowPassword.current === false) {\n        // Show password selected\n        animateImages(currentImages.peakImages, 50);\n      } else if (!showPassword && prevShowPassword.current === true) {\n        // Hide password selected\n        animateImages(currentImages.peakImages, 50, true);\n      }\n    }\n\n    prevFocus.current = currentFocus;\n    prevShowPassword.current = showPassword;\n  }, [\n    currentFocus,\n    showPassword,\n    emailLength,\n    watchBearImages,\n    hideBearImages,\n    peakBearImages,\n    animalImages,\n    currentAnimalIndex,\n  ]);",
+            "oldString": "    // For password input, animate through hide bear images\n    const animateWatchingBearImages = () => {\n      const progress = Math.min(emailLength / 30, 1);\n      const index = Math.min(\n        Math.floor(progress * (watchBearImages.length - 1)),\n        watchBearImages.length - 1,\n      );\n      setCurrentBearImage(watchBearImages[Math.max(0, index)]);\n      setIsAnimating(false);\n    };\n\n    // Animation Logic based on Focus and ShowPassword\n    if (currentFocus === 'EMAIL') {\n      if (prevFocus.current === 'PASSWORD') {\n        // Reverse hideBearImages when moving from PASSWORD to EMAIL\n        animateImages(hideBearImages, 60, true, animateWatchingBearImages);\n      } else {\n        animateWatchingBearImages();\n      }\n    } else if (currentFocus === 'PASSWORD') {\n      if (prevFocus.current !== 'PASSWORD') {\n        // First time entering password field\n        animateImages(hideBearImages, 40, false, () => {\n          if (showPassword) {\n            animateImages(peakBearImages, 50);\n          }\n        });\n      } else if (showPassword && prevShowPassword.current === false) {\n        // Show password selected\n        animateImages(peakBearImages, 50);\n      } else if (!showPassword && prevShowPassword.current === true) {\n        // Hide password selected\n        animateImages(peakBearImages, 50, true);\n      }\n    }\n\n    prevFocus.current = currentFocus;\n    prevShowPassword.current = showPassword;\n  }, [\n    currentFocus,\n    showPassword,\n    emailLength,\n    watchBearImages,\n    hideBearImages,\n    peakBearImages,\n  ]);"
+          },
+          "timestamp": "2026-03-25T17:02:29.761+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "  return {\n    currentFocus,\n    setCurrentFocus,\n    currentBearImage:\n      currentBearImage ?? (getCurrentAnimalImages().watchImages.length > 0 \n        ? getCurrentAnimalImages().watchImages[0] \n        : null),\n    isAnimating,\n    currentAnimalType: currentAnimalIndex,\n  };\n}",
+            "oldString": "  return {\n    currentFocus,\n    setCurrentFocus,\n    currentBearImage:\n      currentBearImage ?? (watchBearImages.length > 0 ? watchBearImages[0] : null),\n    isAnimating,\n  };\n}"
+          },
+          "timestamp": "2026-03-25T17:02:48.605+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "read",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts"
+          },
+          "timestamp": "2026-03-25T17:02:56.392+00:00"
+        },
+        {
+          "type": "assistant",
+          "text": "Now let's run lint and build to verify:",
+          "timestamp": "2026-03-25T17:02:59.071+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "bash",
+          "input": {
+            "command": "npm run lint",
+            "description": "Run lint to check code",
+            "workdir": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals"
+          },
+          "timestamp": "2026-03-25T17:02:59.071+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "  }, [\n    currentFocus,\n    showPassword,\n    emailLength,\n    watchBearImages,\n    hideBearImages,\n    peakBearImages,\n    animalImages,\n    currentAnimalIndex,\n    getCurrentAnimalImages,\n  ]);",
+            "oldString": "  }, [\n    currentFocus,\n    showPassword,\n    emailLength,\n    watchBearImages,\n    hideBearImages,\n    peakBearImages,\n    animalImages,\n    currentAnimalIndex,\n  ]);"
+          },
+          "timestamp": "2026-03-25T17:03:03.675+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "bash",
+          "input": {
+            "command": "npm run lint",
+            "description": "Run lint to check code",
+            "workdir": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals"
+          },
+          "timestamp": "2026-03-25T17:03:12.657+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "  const getCurrentAnimalImages = useCallback(() => {\n    if (animalImages) {\n      return animalImages[currentAnimalIndex];\n    }\n    return {\n      watchImages: watchBearImages,\n      hideImages: hideBearImages,\n      peakImages: peakBearImages,\n    };\n  }, [animalImages, currentAnimalIndex, watchBearImages, hideBearImages, peakBearImages]);",
+            "oldString": "  const getCurrentAnimalImages = () => {\n    if (animalImages) {\n      return animalImages[currentAnimalIndex];\n    }\n    return {\n      watchImages: watchBearImages,\n      hideImages: hideBearImages,\n      peakImages: peakBearImages,\n    };\n  };"
+          },
+          "timestamp": "2026-03-25T17:03:18.151+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "bash",
+          "input": {
+            "command": "npm run lint",
+            "description": "Run lint to check code",
+            "workdir": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals"
+          },
+          "timestamp": "2026-03-25T17:03:26.213+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "bash",
+          "input": {
+            "command": "npm run build",
+            "description": "Run build to verify",
+            "workdir": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals"
+          },
+          "timestamp": "2026-03-25T17:03:30.047+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "edit",
+          "input": {
+            "filePath": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals/src/hooks/useBearAnimation.ts",
+            "newString": "import { useState, useEffect, useRef, useCallback } from 'react';",
+            "oldString": "import { useState, useEffect, useRef } from 'react';"
+          },
+          "timestamp": "2026-03-25T17:03:33.555+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "bash",
+          "input": {
+            "command": "npm run lint && npm run build",
+            "description": "Run lint and build",
+            "workdir": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals"
+          },
+          "timestamp": "2026-03-25T17:03:39.508+00:00"
+        },
+        {
+          "type": "tool_use",
+          "name": "bash",
+          "input": {
+            "command": "git add src/hooks/useBearAnimation.ts && git commit -m \"feat: add animal cycling support to useBearAnimation\"",
+            "description": "Commit the changes",
+            "workdir": "/home/shako/REPOS/others/tunnel-bear-login/.worktrees/add-animals"
+          },
+          "timestamp": "2026-03-25T17:03:47.015+00:00"
+        }
+      ],
+      "total_additions": 53,
+      "total_deletions": 12,
+      "accepted_lines": 51,
+      "overriden_lines": 0
+    }
+  }
+}
