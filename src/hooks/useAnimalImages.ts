@@ -22,35 +22,46 @@ export function useAnimalImages(): AnimalImages {
   useEffect(() => {
     type ImageModule = { default: string };
 
-    const loadAnimalImages = async (animal: 'bear' | 'dog' | 'cat') => {
-      const watchGlob = import.meta.glob<ImageModule>(`/src/assets/img/watch_${animal}_*.png`, { eager: true });
-      const hideGlob = import.meta.glob<ImageModule>(`/src/assets/img/hide_${animal}_*.png`, { eager: true });
-      const peakGlob = import.meta.glob<ImageModule>(`/src/assets/img/peak_${animal}_*.png`, { eager: true });
+    const sortImages = (glob: Record<string, ImageModule>) =>
+      Object.values(glob)
+        .map((img) => img.default)
+        .sort((a, b) => {
+          const aNum = parseInt(a.match(/\d+/)?.[0] || "0");
+          const bNum = parseInt(b.match(/\d+/)?.[0] || "0");
+          return aNum - bNum;
+        });
 
-      const sortImages = (glob: Record<string, ImageModule>) =>
-        Object.values(glob)
-          .map((img) => img.default)
-          .sort((a, b) => {
-            const aNum = parseInt(a.match(/\d+/)?.[0] || "0");
-            const bNum = parseInt(b.match(/\d+/)?.[0] || "0");
-            return aNum - bNum;
-          });
-
-      return {
-        watchImages: sortImages(watchGlob),
-        hideImages: sortImages(hideGlob),
-        peakImages: sortImages(peakGlob),
-      };
-    };
-
-    const loadAllImages = async () => {
+    const loadAllImages = () => {
       try {
-        const [bear, dog, cat] = await Promise.all([
-          loadAnimalImages('bear'),
-          loadAnimalImages('dog'),
-          loadAnimalImages('cat'),
-        ]);
-        setImages({ bear, dog, cat });
+        const bearWatchGlob = import.meta.glob<ImageModule>('/src/assets/img/watch_bear_*.png', { eager: true });
+        const bearHideGlob = import.meta.glob<ImageModule>('/src/assets/img/hide_bear_*.png', { eager: true });
+        const bearPeakGlob = import.meta.glob<ImageModule>('/src/assets/img/peak_bear_*.png', { eager: true });
+
+        const dogWatchGlob = import.meta.glob<ImageModule>('/src/assets/img/watch_dog_*.png', { eager: true });
+        const dogHideGlob = import.meta.glob<ImageModule>('/src/assets/img/hide_dog_*.png', { eager: true });
+        const dogPeakGlob = import.meta.glob<ImageModule>('/src/assets/img/peak_dog_*.png', { eager: true });
+
+        const catWatchGlob = import.meta.glob<ImageModule>('/src/assets/img/watch_cat_*.png', { eager: true });
+        const catHideGlob = import.meta.glob<ImageModule>('/src/assets/img/hide_cat_*.png', { eager: true });
+        const catPeakGlob = import.meta.glob<ImageModule>('/src/assets/img/peak_cat_*.png', { eager: true });
+
+        setImages({
+          bear: {
+            watchImages: sortImages(bearWatchGlob),
+            hideImages: sortImages(bearHideGlob),
+            peakImages: sortImages(bearPeakGlob),
+          },
+          dog: {
+            watchImages: sortImages(dogWatchGlob),
+            hideImages: sortImages(dogHideGlob),
+            peakImages: sortImages(dogPeakGlob),
+          },
+          cat: {
+            watchImages: sortImages(catWatchGlob),
+            hideImages: sortImages(catHideGlob),
+            peakImages: sortImages(catPeakGlob),
+          },
+        });
       } catch {
         console.info('Some animal images not yet available');
       }

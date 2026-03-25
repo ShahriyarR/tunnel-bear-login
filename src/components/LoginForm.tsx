@@ -1,5 +1,5 @@
 import { FormEvent, useRef, useState } from 'react';
-import { useBearImages } from '../hooks/useBearImages';
+import { useAnimalImages } from '../hooks/useAnimalImages';
 import { useBearAnimation } from '../hooks/useBearAnimation';
 import BearAvatar from './BearAvatar';
 import Input from './Input';
@@ -12,19 +12,20 @@ export default function LoginForm() {
   const [values, setValues] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
 
-  const { watchBearImages, hideBearImages, peakBearImages } =
-    useBearImages();
+  const animalImages = useAnimalImages();
   const {
     currentBearImage,
     setCurrentFocus,
     currentFocus,
     isAnimating,
+    currentAnimalType,
   } = useBearAnimation({
-    watchBearImages,
-    hideBearImages,
-    peakBearImages,
+    watchBearImages: animalImages.bear.watchImages,
+    hideBearImages: animalImages.bear.hideImages,
+    peakBearImages: animalImages.bear.peakImages,
     emailLength: values.email.length,
     showPassword,
+    animalImages,
   });
 
   const handleSubmit = (e: FormEvent) => {
@@ -55,7 +56,7 @@ export default function LoginForm() {
           {currentBearImage && (
             <BearAvatar
               currentImage={currentBearImage}
-              key={`${currentFocus}-${values.email.length}`}
+              key={`${currentFocus}-${values.email.length}-${currentAnimalType}`}
             />
           )}
         </div>
